@@ -1,2 +1,2 @@
-# native-plugins
-Native Plugins for Flutter
+# custom-plugins
+Custom Plugins for Flutter
