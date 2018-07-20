@@ -23,8 +23,8 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _initKeyboardHeight();
-    keyboardHeightListener = KeyboardHeightListener(onHeightChanged: _updateKeyboardHeight);
-    keyboardHeightListener.start();
+    //keyboardHeightListener = KeyboardHeightListener(onHeightChanged: _updateKeyboardHeight);
+    //keyboardHeightListener.start();
   }
 
   @override
