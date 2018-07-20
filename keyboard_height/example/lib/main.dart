@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:keyboard_height/keyboard_height.dart';
 
-void main() => runApp(new MyApp());
+void main() {
+  SystemChrome.setPreferredOrientations(<DeviceOrientation>[DeviceOrientation.portraitUp]);
+  runApp(new MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -12,32 +15,17 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
+  final FocusNode _focusNode = new FocusNode();
+  int _keyboardHeight = 0;
 
   @override
   void initState() {
     super.initState();
-    initPlatformState();
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initPlatformState() async {
-    String platformVersion;
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      platformVersion = await KeyboardHeight.platformVersion;
-    } on PlatformException {
-      platformVersion = 'Failed to get platform version.';
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
-    setState(() {
-      _platformVersion = platformVersion;
-    });
+  Future<void> updateKeyboardHeight() async {
+    int height = await getKeyboardHeight();
+    setState(() => _keyboardHeight = height);
   }
 
   @override
@@ -45,10 +33,53 @@ class _MyAppState extends State<MyApp> {
     return new MaterialApp(
       home: new Scaffold(
         appBar: new AppBar(
-          title: const Text('Plugin example app'),
+          title: const Text('KeyboardHeight example app'),
         ),
-        body: new Center(
-          child: new Text('Running on: $_platformVersion\n'),
+        body: new Container(
+          padding: const EdgeInsets.only(top: 20.0),
+          alignment: Alignment.center,
+          child: new Column(
+            children: <Widget>[
+              new Container(
+                margin: const EdgeInsets.only(bottom: 10.0),
+                padding: const EdgeInsets.only(left: 30.0, right: 30.0),
+                child: EditableText(
+                  controller: TextEditingController(),
+                  focusNode: _focusNode,
+                  cursorColor: Colors.black,
+                  style: const TextStyle(
+                    fontSize: 48.0,
+                    color: Colors.black
+                  ),
+                  onSubmitted: (_) => Future.delayed(Duration(milliseconds: 100)).then((_) => updateKeyboardHeight()),
+                ),
+              ),
+              new Container(
+                margin: const EdgeInsets.only(bottom: 10.0),
+                child: new Text(
+                  'Height in pixels: '+_keyboardHeight.toString(),
+                  style: const TextStyle(fontSize: 24.0),
+                ),
+              ),
+              new GestureDetector(
+                onTap: () {
+                  setState(() {
+                    FocusScope.of(context).reparentIfNeeded(_focusNode);
+                    FocusScope.of(context).requestFocus(_focusNode);
+                  });
+                  Future.delayed(Duration(milliseconds: 300)).then((_) => updateKeyboardHeight());
+                },
+                child: new Container(
+                  padding: const EdgeInsets.all(5.0),
+                  color: Colors.grey,
+                  child: const Text(
+                    'OPEN',
+                    style: const TextStyle(fontSize: 24.0),
+                  )
+                )
+              ),
+            ],
+          ),
         ),
       ),
     );
