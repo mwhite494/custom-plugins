@@ -16,15 +16,29 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final FocusNode _focusNode = new FocusNode();
-  int _keyboardHeight = 0;
+  KeyboardHeightListener keyboardHeightListener;
+  int _keyboardHeight;
 
   @override
   void initState() {
     super.initState();
+    _initKeyboardHeight();
+    keyboardHeightListener = KeyboardHeightListener(onHeightChanged: _updateKeyboardHeight);
+    keyboardHeightListener.start();
   }
 
-  Future<void> updateKeyboardHeight() async {
+  @override
+  void dispose() {
+    keyboardHeightListener.stop();
+    super.dispose();
+  }
+
+  Future<void> _initKeyboardHeight() async {
     int height = await getKeyboardHeight();
+    setState(() => _keyboardHeight = height);
+  }
+
+  void _updateKeyboardHeight(height) {
     setState(() => _keyboardHeight = height);
   }
 
@@ -51,7 +65,6 @@ class _MyAppState extends State<MyApp> {
                     fontSize: 48.0,
                     color: Colors.black
                   ),
-                  onSubmitted: (_) => Future.delayed(Duration(milliseconds: 100)).then((_) => updateKeyboardHeight()),
                 ),
               ),
               new Container(
@@ -67,7 +80,6 @@ class _MyAppState extends State<MyApp> {
                     FocusScope.of(context).reparentIfNeeded(_focusNode);
                     FocusScope.of(context).requestFocus(_focusNode);
                   });
-                  Future.delayed(Duration(milliseconds: 300)).then((_) => updateKeyboardHeight());
                 },
                 child: new Container(
                   padding: const EdgeInsets.all(5.0),
