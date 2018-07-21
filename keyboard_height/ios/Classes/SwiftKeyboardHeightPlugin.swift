@@ -31,6 +31,12 @@ public class SwiftKeyboardHeightPlugin: NSObject, FlutterPlugin, FlutterStreamHa
       name: .UIKeyboardWillShow,
       object: nil
     )
+    NotificationCenter.default.addObserver(
+      self,
+      selector: #selector(keyboardWillHide),
+      name: .UIKeyboardWillHide,
+      object: nil
+    )
     return nil
   }
   
@@ -45,6 +51,11 @@ public class SwiftKeyboardHeightPlugin: NSObject, FlutterPlugin, FlutterStreamHa
       height = Int(keyboardSize.height)
       self.sendKeyboardHeightEvent()
     }
+  }
+  
+  @objc func keyboardWillHide(_ notification: Notification) {
+    height = 0
+    self.sendKeyboardHeightEvent()
   }
   
   private func sendKeyboardHeightEvent() {
