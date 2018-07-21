@@ -1,0 +1,22 @@
+PODS:
+  - Flutter (1.0.0)
+  - keyboard_height (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `.symlinks/flutter/ios`)
+  - keyboard_height (from `.symlinks/plugins/keyboard_height/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: ".symlinks/flutter/ios"
+  keyboard_height:
+    :path: ".symlinks/plugins/keyboard_height/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 9d0fac939486c9aba2809b7982dfdbb47a7b0296
+  keyboard_height: 1b428dfbea183dc4ed793d06e5ddfb7b20bfd096
+
+PODFILE CHECKSUM: 7765ea4305eaab0b3dfd384c7de11902aa3195fd
+
+COCOAPODS: 1.5.3
